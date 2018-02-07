@@ -5,6 +5,7 @@ const { ObjectID } = require('mongodb');
 var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
+var { User } = require('../models/users')
 
 let router = express.Router();
 
@@ -28,7 +29,6 @@ router.post('/signup', (req, res) => {
                                 if (err) {
                                     flag = 0;
                                     console.log("Error in finding course details");
-                                    reject("Error in finding course details");
                                     res.status(400).send("Error in finding course details");
                                 } else if (!doc) {
                                     flag = 0;
@@ -73,8 +73,6 @@ router.post('/signup', (req, res) => {
                         })
                     }
                 });
-
-
             } else {
                 res.status(400).send("complete information required for student");
                 reject("Please fill all fields for student");

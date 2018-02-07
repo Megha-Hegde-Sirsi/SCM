@@ -2,9 +2,11 @@ require('./api/config/config');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+var jwt = require('jwt-simple');
 
 var app = express();
 const port = process.env.PORT;
+process.env = { MONGODB_URI: 'mongodb://127.0.0.1:27017/StudentsAndCourses' }
 
 app.use(bodyParser.json());
 app.use(require('./api/routes/signup'));

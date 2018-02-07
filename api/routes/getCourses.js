@@ -5,6 +5,8 @@ const { ObjectID } = require('mongodb');
 var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
+var { User } = require('../models/users')
+
 
 let router = express.Router();
 
@@ -18,7 +20,6 @@ router.get('/courses', (req, res) => {
                 res.status(404).send("Data not found");
                 resolve();
             } else {
-                console.log(result)
                 res.send(result);
                 resolve();
             }

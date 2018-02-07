@@ -5,6 +5,8 @@ const { ObjectID } = require('mongodb');
 var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
+var { User } = require('../models/users')
+
 
 let router = express.Router();
 let courseArr = new Array();
@@ -15,7 +17,7 @@ router.post('/course', (req, res) => {
     promiseCourse = new Promise((resolve, reject) => {
         for (let i = 0; i < req.body.length; i++) {
             let course = req.body[i];
-            if (course.id && course.name && course.description) {
+            if (course.id && course.name) {
                 // let info = req.body;
                 addCourse(req.body[i]);
             } else {
@@ -25,9 +27,8 @@ router.post('/course', (req, res) => {
         }
         resolve();
         setTimeout(() => {
-            console.log(courseArr)
             res.send(courseArr);
-        }, 100);
+        }, 1000);
     })
 })
 
