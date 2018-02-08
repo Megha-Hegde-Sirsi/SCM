@@ -6,6 +6,8 @@ var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
 var { User } = require('../models/users')
+var { authenticate } = require('../.././authenticate/authenticate');
+
 
 let router = express.Router();
 
@@ -15,14 +17,14 @@ router.get('/', (req, res) => {
 });
 
 //STUDENTS SIGNUP
-router.post('/signup', (req, res) => {
+router.post('/signup', authenticate, (req, res) => {
     let studentsArr = new Array();
     let flag = 0;
     return new Promise((resolve, reject) => {
         req.body.forEach((student) => {
             let courseArr = new Array();
             if (student.id && student.name && student.course) {
-                Student.findOneAndUpdate({ id: student.id }, { $set: { "Student.course": student.course } }, { new: true }, function (err, doc) {
+                Student.findOneAndUpdate({ id: student.id }, { $set: { "Student.course": student.course, _creator: req.user._id } }, { new: true }, function (err, doc) {
                     if (err || !doc) {
                         student.course.forEach((course) => {
                             Course.findOne({ id: course.id }, (err, doc) => {
@@ -43,13 +45,19 @@ router.post('/signup', (req, res) => {
                         })
                         setTimeout(() => {
                             if (flag === 1) {
-                                new Student(student).save();
-                                studentsArr.push(student)
+                                let studentInfo = {
+                                    id: student.id,
+                                    name: student.name,
+                                    course: courseArr,
+                                    _creator: req.user._id
+                                }
+                                new Student(studentInfo).save();
+                                studentsArr.push(studentInfo)
                                 console.log("new student information saved");
                             }
                         }, 1000)
-
                     } else {
+                        // let crc = new Array();
                         student.course.forEach((course) => {
                             Course.findOne({ id: course.id }, (err, doc) => {
                                 if (err) {
@@ -63,11 +71,18 @@ router.post('/signup', (req, res) => {
                                     res.status(404).send("specified course id not found");
                                     reject("Specified course id not found");
                                 } else {
+                                    courseArr.push(doc);
                                     flag = 1;
                                 }
                             })
                             if (flag === 1) {
-                                studentsArr.push(student);
+                                let studentInfo = {
+                                    id: student.id,
+                                    name: student.name,
+                                    course: courseArr,
+                                    _creator: req.user._id
+                                }
+                                studentsArr.push(studentInfo);
                                 console.log("student information updated");
                             }
                         })

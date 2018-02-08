@@ -6,13 +6,13 @@ var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
 var { User } = require('../models/users')
-
+var { authenticate } = require('../.././authenticate/authenticate');
 
 let router = express.Router();
 
-router.get('/courses', (req, res) => {
+router.get('/courses', authenticate, (req, res) => {
     return new Promise((resolve, reject) => {
-        Course.find({}, (err, result) => {
+        Course.find({_creator:req.user._id}, (err, result) => {
             if (err) {
                 console.log("Error in finding all students list", err);
                 reject("Error in finding all students list");

@@ -13,6 +13,9 @@ var Student = mongoose.model('Student', {
         minlength: 1,
         trim: true
     },
+    _creator: {
+        type: String
+    },
     course: [{
         id: {
             type: String,

@@ -6,33 +6,37 @@ var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
 var { User } = require('../models/users')
-
+var { authenticate } = require('../.././authenticate/authenticate');
 
 let router = express.Router();
 let courseArr = new Array();
 let promiseCourse;
 
 //ADDING NEW COURSE
-router.post('/course', (req, res) => {
-    promiseCourse = new Promise((resolve, reject) => {
+router.post('/course', authenticate, (req, res) => {
+    console.log("entered the route")
+    return new Promise((resolve, reject) => {
         for (let i = 0; i < req.body.length; i++) {
             let course = req.body[i];
             if (course.id && course.name) {
                 // let info = req.body;
-                addCourse(req.body[i]);
+                let courseInfo = {
+                    id: course.id,
+                    name: course.name,
+                    _creator: req.user._id
+                }
+                addCourse(courseInfo);
             } else {
                 res.status(400).send("complete information required for course");
                 reject("Please fill all fields for course");
             }
         }
-        resolve();
+        // resolve();
         setTimeout(() => {
             res.send(courseArr);
         }, 1000);
     })
 })
-
-
 
 //[PROCEDURE]: ADD OR UPDATE COURSE INFORMATION  
 function addCourse(course) {

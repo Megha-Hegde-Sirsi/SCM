@@ -12,6 +12,9 @@ var Course = mongoose.model('Course', {
     required: true,
     minlength: 1,
     trim: true
+  },
+  _creator: {
+    type: String
   }
 });
 

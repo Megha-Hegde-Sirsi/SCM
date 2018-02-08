@@ -13,10 +13,7 @@ app.use(require('./api/routes/signup'));
 app.use(require('./api/routes/course'));
 app.use(require('./api/routes/getStudents'));
 app.use(require('./api/routes/getCourses'));
-app.use(require('./api/routes/getStudentsByCourse'));
-app.use(require('./api/routes/getStudentsByTime'));
-app.use(require('./api/routes/getStudentsByMarks'));
-
+app.use(require('./api/routes/register'));
 
 app.listen(port, () => {
   console.log(`Started up at port ${port}`);

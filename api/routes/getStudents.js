@@ -6,20 +6,21 @@ var { mongoose } = require('../db/mongoose');
 var { Course } = require('../models/course');
 var { Student } = require('../models/student');
 var { User } = require('../models/users')
+var { authenticate } = require('../.././authenticate/authenticate');
 
 
 let router = express.Router();
 let resArr = new Array();
 
 //GET ALL STUDENT LIST (not complete)
-router.get('/students', (req, res) => {
+router.get('/students', authenticate, (req, res) => {
     let resArr = new Array();
     console.log("-----------------", req.query, "-----------------------")
     if (req.query.courseId) {           //Working 
         return new Promise((resolve, reject) => {
             let crc = req.query.courseId;
             console.log("---------------CRC", crc)
-            Student.find({}, (err, resu) => {
+            Student.find({_creator:req.user._id}, (err, resu) => {
                 if (err) {
                     console.log("Error occured");
                 }
@@ -47,7 +48,7 @@ router.get('/students', (req, res) => {
         return new Promise((resolve, reject) => {
             let min = req.query.min, max = req.query.max;
             let resArr = new Array();
-            Student.find({}, (err, results) => {
+            Student.find({_creator:req.user._id}, (err, results) => {
                 if (err) {
                     console.log("hey error occured");
                     res.status(400).send("hey error occured");
@@ -83,7 +84,7 @@ router.get('/students', (req, res) => {
         })
     } else if (req.query.time) {                //(working)
         return new Promise((resolve, reject) => {
-            Student.find({}, (err, result) => {
+            Student.find({_creator:req.user._id}, (err, result) => {
                 if (err) {
                     console.log("---------------sorry error-------------");
                 } else if (!result) {
@@ -119,7 +120,7 @@ router.get('/students', (req, res) => {
     else {                    //Working
         console.log("no parameters place")
         return new Promise((resolve, reject) => {
-            Student.find({}, (err, result) => {
+            Student.find({_creator:req.user._id}, (err, result) => {
                 if (err) {
                     console.log("Error in finding all students list", err);
                     reject("Error in finding all students list");
