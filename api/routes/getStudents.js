@@ -12,6 +12,19 @@ var { authenticate } = require('../.././authenticate/authenticate');
 let router = express.Router();
 let resArr = new Array();
 
+router.get('/', (req, res) => {
+    Student.find({}, (err, result) => {
+        if (err || !result) {
+            console.log("no result")
+        } else {
+            result.map((student) => {
+                let time = ObjectID(student._id).getTimestamp().toString().slice(0, 15)
+                console.log(time, "\n")
+            })
+        } res.send("something is happening check the console")
+    })
+})
+
 //GET ALL STUDENT LIST (not complete)
 router.get('/students', authenticate, (req, res) => {
     let resArr = new Array();
@@ -19,8 +32,7 @@ router.get('/students', authenticate, (req, res) => {
     if (req.query.courseId) {           //Working 
         return new Promise((resolve, reject) => {
             let crc = req.query.courseId;
-            console.log("---------------CRC", crc)
-            Student.find({_creator:req.user._id}, (err, resu) => {
+            Student.find({ _creator: req.user._id, "course.id": crc }, (err, resu) => {
                 if (err) {
                     console.log("Error occured");
                 }
@@ -28,99 +40,70 @@ router.get('/students', authenticate, (req, res) => {
                     console.log("data not found");
                     res.status(404).send("data not found");
                 } else {
-                    resu.forEach((resul) => {
-                        resul.course.forEach((result) => {
-                            if (result.id === crc) {
-                                resArr.push({ id: resul.id, name: resul.name })
-                            }
-                        })
-                    });
+                    res.send(resu)
                 }
-            }); setTimeout(() => {
-                console.log("--------------------------------", resArr, "----------------------------------");
-                res.send(resArr);
-            }, 1000)
+            });
         })
-
-    } else if (req.query.min || req.query.max) {            //Working
-        console.log(req.query.min, req.query.max)
-        console.log("entered into this route")
+    }
+    else if (req.query.min || req.query.max) {            //Working
         return new Promise((resolve, reject) => {
-            let min = req.query.min, max = req.query.max;
-            let resArr = new Array();
-            Student.find({_creator:req.user._id}, (err, results) => {
+            console.log("entered the marks part")
+            Student.find({ _creator: req.user._id, "course.marks": { $lte: req.query.max, $gte: req.query.min } }, (err, results) => {
                 if (err) {
                     console.log("hey error occured");
                     res.status(400).send("hey error occured");
-                } else if (!results) {
+                } else if (results === []) {
                     console.log("hey there are no records");
                     res.status(404).send("there are no records dude");
                 } else {
-                    for (let i = 0; i < results.length; i++) {
-                        results[i].course.forEach((course) => {
-                            let marks = course.marks;
-                            if (marks <= max && marks >= min) {
-                                Student.find({ marks: marks }, (err, doc) => {
-                                    if (err) {
-                                        console.log("Hey sorry error");
-                                    } else if (!doc) {
-                                        console.log("hey there are no records that come under your filter");
-                                        res.status(404).send("No records matches your search criteria");
-                                    } else {
-                                        resArr.push({ id: results[i].id, name: results[i].name, course: course.name, marks: course.marks });
-                                        console.log(resArr)
-                                    }
-                                })
-                            }
-                        })
-                    }
+                    console.log("yeah results are there")
+                    console.log(results)
+                    res.send(results);
+                    resolve();
                 }
             })
-            setTimeout(() => {
-                console.log("------------------------", resArr, "------------------------");
-                res.send(resArr);
-                resolve();
-            }, 1000)
+
         })
-    } else if (req.query.time) {                //(working)
-        return new Promise((resolve, reject) => {
-            Student.find({_creator:req.user._id}, (err, result) => {
+    }
+
+    else if (req.query.time) {                  //(working)
+        console.log("time function")
+        new Promise((resolve, reject) => {
+            console.log("entered first main promise")
+            Student.find({ _creator: req.user._id }, (err, result) => {
+                console.log("entered student find all")
                 if (err) {
                     console.log("---------------sorry error-------------");
+                    reject("error", err)
                 } else if (!result) {
                     console.log("---------------no data found------------");
                     res.status(404).send("there is no student data");
+                    reject("no data")
                 } else {
-                    for (let i = 0; i < result.length; i++) {
-                        let newId = ObjectID(result[i]._id);
-                        let time = ObjectID(result[i]._id).getTimestamp().toString().slice(0, 15);
+                    console.log("results are there wait")
+                    result.map((result) => {
+                        let time = ObjectID(result._id).getTimestamp().toString().slice(0, 15)
+                        console.log(time)
                         if (time === req.query.time) {
-                            setTimeout(() => {
-                                Student.find({ _id: ObjectID(result[i]._id) }, (err, results) => {
-                                    if (err || !results) {
-                                        console.log("------------check the code again----")
-                                    }
-                                    else if (results) {
-                                        resArr.push(results);
-                                    }
-                                })
-                            }, 1000)
+                            console.log(result);
+                            resArr.push(result);
                         } else {
-                            console.log("there is nothing to show!!!!!!!!");
-                        }
-                    }
+                            console.log("there is no match...that is the problem")
+                        } console.log(resArr, "-----------------");
+                    });
+                    resolve()
                 }
             })
-            setTimeout(() => {
-                res.send(resArr);
-                resolve();
-            }, 2000)
+        }).then(() => {
+            res.send(resArr)
+        }).catch((e) => {
+            console.log("exception occured\n", e)
         })
     }
+
     else {                    //Working
-        console.log("no parameters place")
         return new Promise((resolve, reject) => {
-            Student.find({_creator:req.user._id}, (err, result) => {
+            Student.find({ _creator: req.user._id }, (err, result) => {
                 if (err) {
                     console.log("Error in finding all students list", err);
                     reject("Error in finding all students list");
