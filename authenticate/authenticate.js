@@ -1,9 +1,9 @@
 
-var { User } = require('../api/models/users');
+let { User } = require('../api/models/users');
 
-var authenticate = (req, res, next) => {
+let authenticate = (req, res, next) => {
     console.log("entered authenticate")
-    var token = req.header('Authorization');
+    let token = req.header('Authorization');
     if (!token) {
         console.log("token required");
         res.status(401).send("authentication failed, set token")

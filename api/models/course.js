@@ -1,6 +1,6 @@
-var mongoose = require('mongoose');
+let mongoose = require('mongoose');
 
-var Course = mongoose.model('Course', {
+let Course = mongoose.model('Course', {
   id: {
     type: String,
     required: true,

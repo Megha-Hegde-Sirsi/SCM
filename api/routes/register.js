@@ -2,13 +2,13 @@ let express = require('express');
 const bodyParser = require('body-parser');
 const db = require('mongodb');
 const { ObjectID } = require('mongodb');
-var { mongoose } = require('../db/mongoose');
-var { Course } = require('../models/course');
-var { Student } = require('../models/student');
-var { User } = require('../models/users')
-var bcrypt = require('bcrypt');
-var jwt = require('jwt-simple');
-var config = require('.././config/database'); // get db config file
+let { mongoose } = require('../db/mongoose');
+let { Course } = require('../models/course');
+let { Student } = require('../models/student');
+let { User } = require('../models/users')
+let bcrypt = require('bcrypt');
+let jwt = require('jwt-simple');
+let config = require('.././config/database'); // get db config file
 
 let router = express.Router();
 
@@ -53,7 +53,7 @@ router.post('/register/authenticate', (req, res) => {               //(working)
             let psw = user.password;
             console.log(psw)
             if (psw === req.body.password) {
-                var token = jwt.encode(user, config.secret);
+                let token = jwt.encode(user, config.secret);
                 User.updateOne({ name: user.name }, { token: token }, (err, result) => {
                     if (err) {
                         console.log("error updating token");

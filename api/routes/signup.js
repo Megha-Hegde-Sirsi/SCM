@@ -1,14 +1,14 @@
 let express = require('express');
 const bodyParser = require('body-parser');
 const db = require('mongodb');
-var { mongoose } = require('../db/mongoose');
-var { Course } = require('../models/course');
-var { Student } = require('../models/student');
-var { User } = require('../models/users')
-var bcrypt = require('bcrypt');
-var jwt = require('jwt-simple');
-var config = require('.././config/database'); // get db config file
-var { authenticate } = require('../.././authenticate/authenticate');
+let { mongoose } = require('../db/mongoose');
+let { Course } = require('../models/course');
+let { Student } = require('../models/student');
+let { User } = require('../models/users')
+let bcrypt = require('bcrypt');
+let jwt = require('jwt-simple');
+let config = require('.././config/database'); // get db config file
+let { authenticate } = require('../.././authenticate/authenticate');
 
 let router = express.Router();
 

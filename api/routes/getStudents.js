@@ -2,11 +2,11 @@ let express = require('express');
 const bodyParser = require('body-parser');
 const db = require('mongodb');
 const { ObjectID } = require('mongodb');
-var { mongoose } = require('../db/mongoose');
-var { Course } = require('../models/course');
-var { Student } = require('../models/student');
-var { User } = require('../models/users')
-var { authenticate } = require('../.././authenticate/authenticate');
+let { mongoose } = require('../db/mongoose');
+let { Course } = require('../models/course');
+let { Student } = require('../models/student');
+let { User } = require('../models/users')
+let { authenticate } = require('../.././authenticate/authenticate');
 
 
 let router = express.Router();

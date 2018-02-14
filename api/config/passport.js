@@ -1,9 +1,9 @@
-var JwtStrategy = require('passport-jwt').Strategy;
-var ExtractJwt = require('passport-jwt').ExtractJwt;
-var User = require('../app/models/users');
-var config = require('../config/database'); // get db config file
+let JwtStrategy = require('passport-jwt').Strategy;
+let ExtractJwt = require('passport-jwt').ExtractJwt;
+let User = require('../app/models/users');
+let config = require('../config/database'); // get db config file
 module.exports = function (passport) {
-    var opts = {};
+    let opts = {};
     opts.jwtFromRequest = ExtractJwt.fromAuthHeaderWithScheme("jwt")
     opts.secretOrKey = config.secret;
     passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
